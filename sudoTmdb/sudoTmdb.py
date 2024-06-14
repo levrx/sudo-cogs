@@ -183,7 +183,8 @@ class TheMovieDB(commands.Cog):
                     style=discord.ButtonStyle.link,
                     url=f"https://sudo-flix.lol/media/tmdb-movie-{movie_id}"
                 )
-                view = discord.ui.View(button)
+                view = discord.ui.View()
+                view.add_item(item=button)
                 pages.append((embed, view))
         await SimpleMenu(
             pages,
