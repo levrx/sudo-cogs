@@ -184,7 +184,7 @@ class TheMovieDB(commands.Cog):
             )
             view = discord.ui.View()
             view.add_item(item=button)
-            pages.append({"embed": embed, "view": view})
+            pages.append(embed)
         await SimpleMenu(
             pages,
             use_select_menu=True,
