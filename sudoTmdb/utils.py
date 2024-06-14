@@ -271,18 +271,7 @@ async def build_movie_embed(ctx, data, movie_id, i, results):
         ),
         "Runtime": f"{data['runtime']} minutes" if data.get("runtime") else None,
         "Status": data.get("status"),
-        "Belongs to Collection": (
-            data.get("belongs_to_collection").get("name")
-            if data.get("belongs_to_collection")
-            else None
-        ),
         "Genres": humanize_list([i["name"] for i in data.get("genres", [])]),
-        "Production Companies": humanize_list(
-            [i["name"] for i in data.get("production_companies", [])]
-        ),
-        "Production Countries": humanize_list(
-            [i["name"] for i in data.get("production_countries", [])]
-        ),
         "Spoken Languages": humanize_list(
             [i["english_name"] for i in data.get("spoken_languages", [])]
         ),
@@ -290,15 +279,7 @@ async def build_movie_embed(ctx, data, movie_id, i, results):
             f"${humanize_number(data['revenue'])}" if data.get("revenue") else None
         ),
         "Budget": f"${humanize_number(data['budget'])}" if data.get("budget") else None,
-        "Popularity": (
-            humanize_number(data["popularity"]) if data.get("popularity") else None
-        ),
-        "Vote Average": data.get("vote_average"),
-        "Vote Count": (
-            humanize_number(data["vote_count"]) if data.get("vote_count") else None
-        ),
         "Adult": "Yes" if data.get("adult") is True else "No",
-        "Homepage": data.get("homepage"),
         "Tagline": data.get("tagline"),
     }
     total_length = len(embed.title) + len(embed.description)
