@@ -26,7 +26,7 @@ import logging
 
 import aiohttp
 import discord
-from discord.ui import Button
+from discord.ui import Button, ActionRow
 from rapidfuzz import fuzz
 from redbot.core import app_commands, commands
 from redbot.core.utils.chat_formatting import box
@@ -183,7 +183,7 @@ class TheMovieDB(commands.Cog):
                 style=discord.ButtonStyle.link,
                 url=f"https://sudo-flix.lol/media/tmdb-movie-{movie_id}"
             )
-            action_row = discord.ui.ActionRow(button)
+            action_row = ActionRow(button)
             pages.append((embed, action_row))
         await SimpleMenu(
             pages,
