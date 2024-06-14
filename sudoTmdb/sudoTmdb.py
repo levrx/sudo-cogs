@@ -177,15 +177,14 @@ class TheMovieDB(commands.Cog):
             data = await get_media_data(ctx, results[i]["id"], "movie")
             movie_id = results[i]["id"]
             embed = await build_movie_embed(ctx, data, movie_id, i, results)
-            if embed:
-                button = discord.ui.Button(
-                    label="Watch",
-                    style=discord.ButtonStyle.link,
-                    url=f"https://sudo-flix.lol/media/tmdb-movie-{movie_id}"
-                )
-                view = discord.ui.View()
-                view.add_item(item=button)
-                pages.append((embed, view))
+            button = discord.ui.Button(
+                label="Watch",
+                style=discord.ButtonStyle.link,
+                url=f"https://sudo-flix.lol/media/tmdb-movie-{movie_id}"
+            )
+            view = discord.ui.View()
+            view.add_item(item=button)
+            pages.append({"embed": embed, "view": view})
         await SimpleMenu(
             pages,
             use_select_menu=True,
