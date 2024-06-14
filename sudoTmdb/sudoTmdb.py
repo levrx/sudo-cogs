@@ -26,7 +26,6 @@ import logging
 
 import aiohttp
 import discord
-from discord.ui import Button, ActionRow
 from rapidfuzz import fuzz
 from redbot.core import app_commands, commands
 from redbot.core.utils.chat_formatting import box
@@ -178,13 +177,14 @@ class TheMovieDB(commands.Cog):
             data = await get_media_data(ctx, results[i]["id"], "movie")
             movie_id = results[i]["id"]
             embed = await build_movie_embed(ctx, data, movie_id, i, results)
-            button = Button(
-                label="Watch",
-                style=discord.ButtonStyle.link,
-                url=f"https://sudo-flix.lol/media/tmdb-movie-{movie_id}"
-            )
-            action_row = ActionRow(button)
-            pages.append((embed, action_row))
+            if embed:
+                button = discord.ui.Button(
+                    label="Watch",
+                    style=discord.ButtonStyle.link,
+                    url=f"https://sudo-flix.lol/media/tmdb-movie-{movie_id}"
+                )
+                view = discord.ui.View(button)
+                pages.append((embed, view))
         await SimpleMenu(
             pages,
             use_select_menu=True,
