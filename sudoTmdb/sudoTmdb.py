@@ -187,7 +187,7 @@ class TheMovieDB(commands.Cog):
             pages.append(embed)
         await SimpleMenu(
             pages,
-            use_select_menu=False,
+            use_select_menu=True,
             disable_after_timeout=True,
             timeout=120,
         ).start(ctx)

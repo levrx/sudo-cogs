@@ -86,7 +86,7 @@ async def get_people_data(ctx, people_id: int):
     return await fetch_data(ctx, base_url)
 
 
-## People Embed
+# People Embed
 async def build_people_embed(ctx, data, people_id):
     """Build an embed for a person."""
     if not data:
@@ -99,13 +99,15 @@ async def build_people_embed(ctx, data, people_id):
     )
     fields = {
         "Birthday:": (
-            f"<t:{int(datetime.strptime(data['birthday'], '%Y-%m-%d').timestamp())}:D>"
+            f"<t:{int(datetime.strptime(
+                data['birthday'], '%Y-%m-%d').timestamp())}:D>"
             if data.get("birthday")
             else None
         ),
         "Place of Birth:": data.get("place_of_birth"),
         "Popularity:": (
-            humanize_number(data["popularity"]) if data.get("popularity") else None
+            humanize_number(data["popularity"]) if data.get(
+                "popularity") else None
         ),
         "Known For:": (
             data["known_for_department"]
@@ -115,7 +117,8 @@ async def build_people_embed(ctx, data, people_id):
         ),
         "Also Known As:": humanize_list(data.get("also_known_as", [])),
         "Last Updated:": (
-            f"<t:{int(datetime.strptime(data['last_updated_at'], '%Y-%m-%d %H:%M:%S').timestamp())}:R>"
+            f"<t:{int(datetime.strptime(
+                data['last_updated_at'], '%Y-%m-%d %H:%M:%S').timestamp())}:R>"
             if data.get("last_updated_at")
             else None
         ),
@@ -159,7 +162,7 @@ async def build_people_embed(ctx, data, people_id):
     return embed
 
 
-## Tv and Movie Embeds
+# Tv and Movie Embeds
 async def build_tvshow_embed(ctx, data, tv_id, i, results):
     """Build an embed for a TV show."""
     if not data:
@@ -173,22 +176,26 @@ async def build_tvshow_embed(ctx, data, tv_id, i, results):
     fields = {
         "Original Name": data.get("original_name"),
         "First Air Date": (
-            f"<t:{int(datetime.strptime(data['first_air_date'], '%Y-%m-%d').timestamp())}:D>"
+            f"<t:{int(datetime.strptime(
+                data['first_air_date'], '%Y-%m-%d').timestamp())}:D>"
             if data.get("first_air_date")
             else None
         ),
         "Last Episode Air Date": (
-            f"<t:{int(datetime.strptime(data['last_episode_to_air']['air_date'], '%Y-%m-%d').timestamp())}:D>"
+            f"<t:{int(datetime.strptime(
+                data['last_episode_to_air']['air_date'], '%Y-%m-%d').timestamp())}:D>"
             if data.get("last_episode_to_air")
             else None
         ),
         "Next Episode Air Date": (
-            f"<t:{int(datetime.strptime(data['next_episode_to_air']['air_date'], '%Y-%m-%d').timestamp())}:D>"
+            f"<t:{int(datetime.strptime(
+                data['next_episode_to_air']['air_date'], '%Y-%m-%d').timestamp())}:D>"
             if data.get("next_episode_to_air")
             else None
         ),
         "Last Air Date": (
-            f"<t:{int(datetime.strptime(data['last_air_date'], '%Y-%m-%d').timestamp())}:D>"
+            f"<t:{int(datetime.strptime(
+                data['last_air_date'], '%Y-%m-%d').timestamp())}:D>"
             if data.get("last_air_date")
             else None
         ),
@@ -219,15 +226,20 @@ async def build_tvshow_embed(ctx, data, tv_id, i, results):
         ),
         "Created By": ", ".join([i["name"] for i in data.get("created_by", [])]),
         "Popularity": (
-            humanize_number(data["popularity"]) if data.get("popularity") else None
+            humanize_number(data["popularity"]) if data.get(
+                "popularity") else None
         ),
         "Vote Average": data.get("vote_average"),
         "Vote Count": (
-            humanize_number(data["vote_count"]) if data.get("vote_count") else None
+            humanize_number(data["vote_count"]) if data.get(
+                "vote_count") else None
         ),
         "Adult": "Yes" if data.get("adult") is True else "No",
         "Homepage": data.get("homepage"),
         "Tagline": data.get("tagline"),
+        "Watch": "\n".join([
+            f"[sudo-flix](https://sudo-flix.lol/media/tmdb-tv-{tv_id})",
+        ])
     }
     total_length = len(embed.title) + len(embed.description)
     for name, value in fields.items():
@@ -265,22 +277,48 @@ async def build_movie_embed(ctx, data, movie_id, i, results):
     fields = {
         "Original Title": data.get("original_title"),
         "Release Date": (
-            f"<t:{int(datetime.strptime(data['release_date'], '%Y-%m-%d').timestamp())}:D>"
+            f"<t:{int(datetime.strptime(
+                data['release_date'], '%Y-%m-%d').timestamp())}:D>"
             if data.get("release_date")
             else None
         ),
         "Runtime": f"{data['runtime']} minutes" if data.get("runtime") else None,
         "Status": data.get("status"),
+        "Belongs to Collection": (
+            data.get("belongs_to_collection").get("name")
+            if data.get("belongs_to_collection")
+            else None
+        ),
         "Genres": humanize_list([i["name"] for i in data.get("genres", [])]),
+        "Production Companies": humanize_list(
+            [i["name"] for i in data.get("production_companies", [])]
+        ),
+        "Production Countries": humanize_list(
+            [i["name"] for i in data.get("production_countries", [])]
+        ),
         "Spoken Languages": humanize_list(
             [i["english_name"] for i in data.get("spoken_languages", [])]
         ),
         "Revenue": (
-            f"${humanize_number(data['revenue'])}" if data.get("revenue") else None
+            f"${humanize_number(data['revenue'])}" if data.get(
+                "revenue") else None
         ),
         "Budget": f"${humanize_number(data['budget'])}" if data.get("budget") else None,
+        "Popularity": (
+            humanize_number(data["popularity"]) if data.get(
+                "popularity") else None
+        ),
+        "Vote Average": data.get("vote_average"),
+        "Vote Count": (
+            humanize_number(data["vote_count"]) if data.get(
+                "vote_count") else None
+        ),
         "Adult": "Yes" if data.get("adult") is True else "No",
+        "Homepage": data.get("homepage"),
         "Tagline": data.get("tagline"),
+        "Watch": "\n".join([
+            f"[sudo-flix](https://sudo-flix.lol/media/tmdb-movie-{movie_id})",
+        ])
     }
     total_length = len(embed.title) + len(embed.description)
     for name, value in fields.items():
