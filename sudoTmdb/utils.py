@@ -230,6 +230,9 @@ async def build_tvshow_embed(ctx, data, tv_id, i, results):
         "Tagline": data.get("tagline"),
         "Watch": "\n".join([
             f"[sudo-flix](https://sudo-flix.lol/media/tmdb-tv-{tv_id})",
+            f"[sudo-flix mirror](https://flix.kanded.xyz/media/tmdb-tv-{tv_id})",
+            f"[movies.lewrx](https://movies.levrx.lol/media/tmdb-tv-{tv_id})",
+            f"[movies.matthy](https://movies.mathy.li/media/tmdb-tv-{tv_id})",
         ])
     }
     total_length = len(embed.title) + len(embed.description)
@@ -296,15 +299,14 @@ async def build_movie_embed(ctx, data, movie_id, i, results):
         "Popularity": (
             humanize_number(data["popularity"]) if data.get("popularity") else None
         ),
-        "Vote Average": data.get("vote_average"),
-        "Vote Count": (
-            humanize_number(data["vote_count"]) if data.get("vote_count") else None
-        ),
         "Adult": "Yes" if data.get("adult") is True else "No",
         "Homepage": data.get("homepage"),
         "Tagline": data.get("tagline"),
         "Watch": "\n".join([
             f"[sudo-flix](https://sudo-flix.lol/media/tmdb-movie-{movie_id})",
+            f"[sudo-flix mirror](https://flix.kanded.xyz/media/tmdb-movie-{movie_id})",
+            f"[movies.lewrx](https://movies.levrx.lol/media/tmdb-movie-{movie_id})",
+            f"[movies.matthy](https://movies.mathy.li/media/tmdb-movie-{movie_id})",
         ])
     }
     total_length = len(embed.title) + len(embed.description)
