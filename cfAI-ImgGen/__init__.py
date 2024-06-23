@@ -24,9 +24,9 @@ SOFTWARE.
 
 from redbot.core.bot import Red
 
-from .core import StableDiffusion
+from .core import imgGen
 
 
 async def setup(bot: Red) -> None:
-    cog = StableDiffusion(bot)
+    cog = imgGen(bot)
     await bot.add_cog(cog)

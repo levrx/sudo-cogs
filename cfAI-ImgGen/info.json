@@ -1,10 +1,10 @@
 {
-    "author": ["inthedark.org"],
-    "install_msg": "Thanks for installing the stablediffusion cog.",
-    "name": "StableDiffusion",
+    "author": ["inthedark.org", "tpn"],
+    "install_msg": "",
+    "name": "Cloudflare Workers AI Image Generator",
     "disabled": false,
-    "short": "Stable Diffusion using the Replicate API.",
-    "description": "Stable Diffusion using the Replicate API.",
+    "short": "Image Generation using the Cloudflare Workers AI API.",
+    "description": "Image Generation using the Cloudflare Workers AI API.",
     "tags": [
         "ai",
         "stablediffusion",
@@ -12,6 +12,6 @@
         "diffusion"
     ],
     "required_cogs": {},
-    "requirements": ["backoff"],
+    "requirements": [],
     "type": "COG"
 }
