@@ -86,7 +86,7 @@ class imgGen(commands.Cog):
             filename=f"{prompt.replace(' ', '_')}.png"
         )
 
-    @commands.command(name="gen", aliases=["img", "i"])
+    @commands.command(name="gen", aliases=["i"])
     async def _gen(self, ctx: commands.Context, *, prompt: str) -> None:
         await ctx.typing()
         try:
