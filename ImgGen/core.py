@@ -23,7 +23,8 @@ SOFTWARE.
 """
 
 import io
-from typing import Final, List
+import json
+from typing import Final, List, Optional
 import aiohttp
 import discord
 from redbot.core import commands
@@ -37,7 +38,7 @@ class DiffusionError(discord.errors.DiscordException):
 
 class imgGen(commands.Cog):
     __author__: Final[List[str]] = ["tpn"]
-    __version__: Final[str] = "0.1.0"
+    __version__: Final[str] = "0.1.1"
 
     BASE_URL: Final[str] = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}"
     HEADERS: Final[dict] = {"Content-Type": "application/json"}
@@ -45,6 +46,11 @@ class imgGen(commands.Cog):
     def __init__(self, bot: Red) -> None:
         self.bot: Red = bot
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
+        self.model_mapping = {
+            "sdxl": "@cf/stabilityai/stable-diffusion-xl-base-1.0",
+            "dreamshaper": "@cf/lykon/dreamshaper-8-lcm",
+            "sdxl-lightning": "@cf/bytedance/stable-diffusion-xl-lightning"
+        }
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -70,14 +76,18 @@ class imgGen(commands.Cog):
                 raise DiffusionError(f"Error?: {response.status}")
             return await response.read()
 
-    async def _generate_image(self, prompt: str) -> bytes:
+    async def _generate_image(self, prompt: str, model: Optional[str] = None) -> bytes:
         token = await self.bot.get_shared_api_tokens("CFWorkersAI")
         account_id = token.get("account_id")
         api_key = token.get("api_key")
-        model = token.get("model")
-        if not account_id or not api_key or not model:
+        default_model = token.get("model")
+        if not account_id or not api_key or not default_model:
             raise DiffusionError("Setup not done. Use `set api CFWorkersAI account_id <your account id>`, `set api CFWorkersAI api_key <your api key>`, and `set api CFWorkersAI model <model>`.")
 
+        model = model or default_model
+        if model.lower() not in self.model_mapping:
+            raise DiffusionError(f"`{model}` does not exist?")
+        model = self.model_mapping.get(model.lower(), model)
         return await self._request(prompt, account_id, api_key, model)
 
     async def _image_to_file(self, image_data: bytes, prompt: str) -> discord.File:
@@ -89,8 +99,15 @@ class imgGen(commands.Cog):
     @commands.command(name="gen", aliases=["i"])
     async def _gen(self, ctx: commands.Context, *, prompt: str) -> None:
         await ctx.typing()
+        prompt, *args = prompt.split(" ")
+        model = None
+
+        for arg in args:
+            if arg.startswith("--model="):
+                model = arg.split("=")[1]
+
         try:
-            image_data = await self._generate_image(prompt)
+            image_data = await self._generate_image(prompt, model)
         except DiffusionError as e:
             await ctx.send(
                 f"Something went wrong...\n{e}",
