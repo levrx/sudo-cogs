@@ -51,6 +51,11 @@ class imgGen(commands.Cog):
             "sdxl-lightning": "@cf/bytedance/stable-diffusion-xl-lightning"
         }
 
+    async def initialize_tokens(self):
+            self.tokens = await self.bot.get_shared_api_tokens("CFWorkersAI")
+            if not self.tokens.get("account_id") or not self.tokens.get("api_key") or not self.tokens.get("model"):
+                raise DiffusionError("Setup not done. Use `set api CFWorkersAI account_id <your account id>`, `set api CFWorkersAI api_key <your api key>`, and `set api CFWorkersAI model <model>`.")
+
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
         n = "\n" if "\n\n" not in pre_processed else ""
@@ -60,6 +65,9 @@ class imgGen(commands.Cog):
             f"Author: **{self.__author__}**",
         ]
         return "\n".join(text)
+
+    async def cog_load(self) -> None:
+        await self.initialize_tokens()
 
     async def cog_unload(self) -> None:
         if self.session:
@@ -81,12 +89,9 @@ class imgGen(commands.Cog):
             return await response.read()
 
     async def _generate_image(self, prompt: str, model: Optional[str], strength: Optional[float], guidance: Optional[float]) -> bytes:
-        token = await self.bot.get_shared_api_tokens("CFWorkersAI")
-        account_id = token.get("account_id")
-        api_key = token.get("api_key")
-        default_model = token.get("model")
-        if not account_id or not api_key or not default_model:
-            raise DiffusionError("Setup not done. Use `set api CFWorkersAI account_id <your account id>`, `set api CFWorkersAI api_key <your api key>`, and `set api CFWorkersAI model <model>`.")
+        account_id = self.tokens["account_id"]
+        api_key = self.tokens["api_key"]
+        default_model = self.tokens["model"]
 
         model = model or default_model
         if model.lower() not in self.model_mapping:
@@ -146,7 +151,7 @@ class imgGen(commands.Cog):
         file: discord.File = await self._image_to_file(image_data, prompt)
         await ctx.send(
             embed=discord.Embed(
-                description=f"Prompt: {prompt}; Model: {model if model else (await self.bot.get_shared_api_tokens("CFWorkersAI")).get("model")}",
+                description=f"Prompt: {prompt}; Model: {model if model else self.tokens.get("model")}",
                 color=await ctx.embed_color(),
             ),
             file=file,
