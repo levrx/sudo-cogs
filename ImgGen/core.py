@@ -151,7 +151,7 @@ class imgGen(commands.Cog):
         file: discord.File = await self._image_to_file(image_data, prompt)
         await ctx.send(
             embed=discord.Embed(
-                description=f"Prompt: {prompt}; Model: {model if model else self.tokens.get("model")}",
+                description=f"Prompt: {prompt}; Model: {model if model else self.tokens.get('model')}",
                 color=await ctx.embed_color(),
             ),
             file=file,
