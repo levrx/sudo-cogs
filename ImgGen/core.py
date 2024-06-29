@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 import io
-import json
 from typing import Final, List, Optional
 import aiohttp
 import discord
@@ -38,7 +37,7 @@ class DiffusionError(discord.errors.DiscordException):
 
 class imgGen(commands.Cog):
     __author__: Final[List[str]] = ["tpn"]
-    __version__: Final[str] = "0.1.1"
+    __version__: Final[str] = "0.1.5"
 
     BASE_URL: Final[str] = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}"
     HEADERS: Final[dict] = {"Content-Type": "application/json"}
@@ -66,17 +65,22 @@ class imgGen(commands.Cog):
         if self.session:
             await self.session.close()
 
-    async def _request(self, prompt: str, account_id: str, api_key: str, model: str) -> bytes:
+    async def _request(self, prompt: str, account_id: str, api_key: str, model: str, strength: Optional[float], guidance: Optional[float]) -> bytes:
         url = self.BASE_URL.format(account_id=account_id, model=model)
         headers = {**self.HEADERS, "Authorization": f"Bearer {api_key}"}
         payload = {"prompt": prompt}
 
+        if strength is not None:
+            payload["strength"] = strength
+        if guidance is not None:
+            payload["guidance"] = guidance
+            
         async with self.session.post(url, headers=headers, json=payload) as response:
             if response.status != 200:
                 raise DiffusionError(f"Error?: {response.status}")
             return await response.read()
 
-    async def _generate_image(self, prompt: str, model: Optional[str] = None) -> bytes:
+    async def _generate_image(self, prompt: str, model: Optional[str], strength: Optional[float], guidance: Optional[float]) -> bytes:
         token = await self.bot.get_shared_api_tokens("CFWorkersAI")
         account_id = token.get("account_id")
         api_key = token.get("api_key")
@@ -86,9 +90,9 @@ class imgGen(commands.Cog):
 
         model = model or default_model
         if model.lower() not in self.model_mapping:
-            raise DiffusionError(f"`{model}` does not exist?")
+            raise DiffusionError(f"Model `{model}` does not exist.")
         model = self.model_mapping.get(model.lower(), model)
-        return await self._request(prompt, account_id, api_key, model)
+        return await self._request(prompt, account_id, api_key, model, strength, guidance)
 
     async def _image_to_file(self, image_data: bytes, prompt: str) -> discord.File:
         return discord.File(
@@ -101,16 +105,30 @@ class imgGen(commands.Cog):
         await ctx.typing()
         args = prompt.split(" ")
         model = None
+        strength = None
+        guidance = None
 
         for arg in args:
             if arg.startswith("--model="):
                 model = arg.split("=")[1]
                 args.remove(arg)
+            elif arg.startswith("--strength="):
+                try:
+                    strength = float(arg.split("=")[1])
+                except ValueError:
+                    await ctx.send(f"Invalid strength value. Ignoring it.")
+                args.remove(arg)
+            elif arg.startswith("--guidance="):
+                try:
+                    guidance = float(arg.split("=")[1])
+                except ValueError:
+                    await ctx.send(f"Invalid guidance value. Ignoring it.")
+                args.remove(arg)
 
         prompt = " ".join(args)
 
         try:
-            image_data = await self._generate_image(prompt, model)
+            image_data = await self._generate_image(prompt, model, strength, guidance)
         except DiffusionError as e:
             await ctx.send(
                 f"Something went wrong...\n{e}",
@@ -128,7 +146,7 @@ class imgGen(commands.Cog):
         file: discord.File = await self._image_to_file(image_data, prompt)
         await ctx.send(
             embed=discord.Embed(
-                description=f"Prompt: {prompt}",
+                description=f"Prompt: {prompt}; Model: {model}",
                 color=await ctx.embed_color(),
             ),
             file=file,
