@@ -37,7 +37,7 @@ class DiffusionError(discord.errors.DiscordException):
 
 class imgGen(commands.Cog):
     __author__: Final[List[str]] = ["tpn"]
-    __version__: Final[str] = "0.1.5"
+    __version__: Final[str] = "0.1.6"
 
     BASE_URL: Final[str] = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/{model}"
     HEADERS: Final[dict] = {"Content-Type": "application/json"}
@@ -101,31 +101,31 @@ class imgGen(commands.Cog):
         )
 
     @commands.command(name="gen", aliases=["i"])
-    async def _gen(self, ctx: commands.Context, *, prompt: str) -> None:
+    async def _gen(self, ctx: commands.Context, *, args: str) -> None:
         await ctx.typing()
-        args = prompt.split(" ")
+        args_list = args.split(" ")
         model = None
         strength = None
         guidance = None
+        prompt_parts = []
 
-        for arg in args:
+        for arg in args_list:
             if arg.startswith("--model="):
                 model = arg.split("=")[1]
-                args.remove(arg)
             elif arg.startswith("--strength="):
                 try:
                     strength = float(arg.split("=")[1])
                 except ValueError:
-                    await ctx.send(f"Invalid strength value. Ignoring it.")
-                args.remove(arg)
+                    await ctx.send("Invalid strength value. Ignoring it.")
             elif arg.startswith("--guidance="):
                 try:
                     guidance = float(arg.split("=")[1])
                 except ValueError:
-                    await ctx.send(f"Invalid guidance value. Ignoring it.")
-                args.remove(arg)
+                    await ctx.send("Invalid guidance value. Ignoring it.")
+            else:
+                prompt_parts.append(arg)
 
-        prompt = " ".join(args)
+        prompt = " ".join(prompt_parts)
 
         try:
             image_data = await self._generate_image(prompt, model, strength, guidance)
