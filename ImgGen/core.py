@@ -99,12 +99,15 @@ class imgGen(commands.Cog):
     @commands.command(name="gen", aliases=["i"])
     async def _gen(self, ctx: commands.Context, *, prompt: str) -> None:
         await ctx.typing()
-        prompt, *args = prompt.split(" ")
+        args = prompt.split(" ")
         model = None
 
         for arg in args:
             if arg.startswith("--model="):
                 model = arg.split("=")[1]
+                args.remove(arg)
+
+        prompt = " ".join(args)
 
         try:
             image_data = await self._generate_image(prompt, model)
