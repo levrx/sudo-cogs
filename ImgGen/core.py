@@ -107,6 +107,23 @@ class imgGen(commands.Cog):
 
     @commands.command(name="gen", aliases=["i"])
     async def _gen(self, ctx: commands.Context, *, args: str) -> None:
+        """Generate Images
+
+        **Examples:**
+        - `[p]i cyberpunk cat`
+        - `[p]i kermit --model=dreamshaper`
+
+        **Arguments:**
+        - `<prompt>` - A detailed description of the image you want to create.
+        - `--model` - Choose the specific model to use for image generation.
+        - `--strength` - Determine the influence of the prompt on the final image. Higher values make the image more closely match the description. (Default: 1)
+        - `--guidance` - Direct the artistic style of the generated image. Higher values result in a more pronounced and defined style. (Default: 7.5)
+        
+        **Models:**
+        - `dreamshaper` - Stable Diffusion model that has been fine-tuned to be better at photorealism without sacrificing range.
+        - `sdxl` - Diffusion-based text-to-image generative model by Stability AI. Generates and modify images based on text prompts.
+        - `sdxl-lightning` - SDXL-Lightning is a lightning-fast text-to-image generation model. It can generate high-quality 1024px images in a few steps.
+        """
         await ctx.typing()
         args_list = args.split(" ")
         model = None
