@@ -232,6 +232,7 @@ async def build_tvshow_embed(ctx, data, tv_id, i, results):
             f"[sudo-flix](https://sudo-flix.lol/media/tmdb-tv-{tv_id})",
             f"[sudo-flix mirror](https://flix.kanded.xyz/media/tmdb-tv-{tv_id})",
             f"[movies.levrx](https://movies.levrx.lol/media/tmdb-tv-{tv_id})",
+            f"[VidBinge](https://vidbinge.com/media/tmdb-tv-{movie_id})",
         ])
     }
     total_length = len(embed.title) + len(embed.description)
@@ -305,6 +306,7 @@ async def build_movie_embed(ctx, data, movie_id, i, results):
             f"[sudo-flix](https://sudo-flix.lol/media/tmdb-movie-{movie_id})",
             f"[sudo-flix mirror](https://flix.kanded.xyz/media/tmdb-movie-{movie_id})",
             f"[movies.levrx](https://movies.levrx.lol/media/tmdb-movie-{movie_id})",
+            f"[VidBinge](https://vidbinge.com/media/tmdb-movie-{movie_id})",
         ])
     }
     total_length = len(embed.title) + len(embed.description)
