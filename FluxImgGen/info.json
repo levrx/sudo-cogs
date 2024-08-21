@@ -1,0 +1,15 @@
+{
+    "author": ["inthedark.org", "tpn"],
+    "install_msg": "",
+    "name": "Flux Image Generatation",
+    "disabled": false,
+    "short": "Image Generation using the flux model hosted on AnyAI",
+    "description": "Image Generation using the flux model hosted on AnyAI",
+    "tags": [
+        "ai",
+        "flux"
+    ],
+    "required_cogs": {},
+    "requirements": [],
+    "type": "COG"
+}
