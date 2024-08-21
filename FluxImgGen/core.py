@@ -101,7 +101,7 @@ class FluxImgGen(commands.Cog):
             filename=f"{prompt.replace(' ', '_')}.png"
         )
 
-    @commands.command(name="gen", aliases=["i"])
+    @commands.command(name="flux", aliases=["f"])
     async def _gen(self, ctx: commands.Context, *, args: str) -> None:
         """Generate Images using Flux!
 
