@@ -106,8 +106,8 @@ class FluxImgGen(commands.Cog):
         """Generate Images using Flux!
 
         **Examples:**
-        - `[p]i cyberpunk cat`
-        - `[p]i kermit --model=realism`
+        - `[p]flux cyberpunk cat`
+        - `[p]f kermit --model=realism`
 
         **Arguments:**
         - `<prompt>` - A detailed description of the image you want to create.
