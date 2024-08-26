@@ -83,9 +83,14 @@ class FluxImgGen(commands.Cog):
             sizeParam = size
         url = f"{baseUrl}?prompt={prompt}&model={model}&size={sizeParam}&seed={seed}"
         async with self.session.get(url) as response:
+            content = await response.read()
+            
             if response.status != 200:
                 raise DiffusionError(f"Error?: {response.status}")
-            return await response.read()
+            if content.startswith(b"NSFW detected"):
+                raise DiffusionError("NSFW")
+
+            return content
 
     async def _generate_image(self, prompt: str, model: Optional[str], size: Optional[str], seed: int) -> bytes:
         default_model = self.tokens["model"]
