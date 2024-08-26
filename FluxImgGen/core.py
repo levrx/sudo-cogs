@@ -49,7 +49,10 @@ class FluxImgGen(commands.Cog):
             "realism": "flux-realism",
             "3d": "flux-3d",
             "anime": "flux-anime",
-            "disney": "flux-disney"
+            "disney": "flux-disney",
+            "pixel": "flux-pixel",
+            "4o": "flux-4o",
+            "anydark": "any-dark"
         }
 
     async def initialize_tokens(self):
