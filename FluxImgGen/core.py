@@ -60,8 +60,8 @@ class FluxImgGen(commands.Cog):
 
     async def initialize_tokens(self):
         self.tokens = await self.bot.get_shared_api_tokens("flux")
-        if not self.tokens.get("model") or not self.tokens.get("size") or not self.tokens.get("endpoint"):
-            raise DiffusionError("Setup not done. Use `set api flux model <default_model>`, `set api flux size <default_size>`, and `set api flux endpoint <baseUrl for api>`.")
+        if not self.tokens.get("model") or not self.tokens.get("size") or not self.tokens.get("endpoint") or not self.tokens.get("key"):
+            raise DiffusionError("Setup not done. Use `set api flux key <api_key> set api flux model <default_model>`, `set api flux size <default_size>`, and `set api flux endpoint <baseUrl for api>`.")
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -89,9 +89,13 @@ class FluxImgGen(commands.Cog):
             "model": model
         }
         
+        key = self.tokens.get("key")
+        headers = {
+            "Authorization": f"Bearer {key}"
+        }
         url = f"{baseUrl}/v1/images/generations"
         
-        async with self.session.post(url, json=data) as response:
+        async with self.session.post(url, json=data, headers=headers) as response:
             content = await response.json()
 
             if response.status != 200:
@@ -101,7 +105,7 @@ class FluxImgGen(commands.Cog):
             async with self.session.get(image_url) as img_response:
                 return await img_response.read()
 
-    async def _generate_image(self, prompt: str, model: Optional[str], size: Optional[str], seed: int) -> bytes:
+    async def _generate_image(self, prompt: str, model: Optional[str], size: Optional[str]) -> bytes:
         default_model = self.tokens["model"]
         default_size = self.tokens["size"]
         baseUrl = self.tokens["endpoint"]
@@ -111,7 +115,7 @@ class FluxImgGen(commands.Cog):
         if model.lower() not in self.model_mapping:
             raise DiffusionError(f"Model `{model}` does not exist.")
         model = self.model_mapping.get(model.lower(), model)
-        return await self._request(baseUrl, prompt, model, size, seed)
+        return await self._request(baseUrl, prompt, model, size)
 
     async def _image_to_file(self, image_data: bytes, prompt: str) -> discord.File:
         return discord.File(
@@ -139,7 +143,6 @@ class FluxImgGen(commands.Cog):
         args_list = args.split(" ")
         model = None
         size = None
-        seed = random.randint(1, 100000)
         prompt_parts = []
 
         for arg in args_list:
@@ -150,15 +153,13 @@ class FluxImgGen(commands.Cog):
                 if not re.match(r"^\d+:\d+$", size):
                     await ctx.send("Invalid size value. Please provide a valid aspect ratio in the format 'width:height' (e.g., '16:9').")
                     return
-            elif arg.startswith("--seed="):
-                seed = int(arg.split("=")[1])
             else:
                 prompt_parts.append(arg)
 
         prompt = " ".join(prompt_parts)
 
         try:
-            image_data = await self._generate_image(prompt, model, size, seed)
+            image_data = await self._generate_image(prompt, model, size)
         except DiffusionError as e:
             await ctx.send(
                 f"Something went wrong...\n{e}",
@@ -176,7 +177,7 @@ class FluxImgGen(commands.Cog):
         file: discord.File = await self._image_to_file(image_data, prompt)
         await ctx.send(
             embed=discord.Embed(
-                description=f"Prompt: {prompt}; Model: {model if model else self.tokens.get('model')}; Seed: {seed}",
+                description=f"Prompt: {prompt}; Model: {model if model else self.tokens.get('model')};",
                 color=await ctx.embed_color(),
             ),
             file=file,
