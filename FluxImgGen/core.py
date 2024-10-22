@@ -127,16 +127,11 @@ class FluxImgGen(commands.Cog):
 
     @commands.command(name="flux", aliases=["f"])
     async def _gen(self, ctx: commands.Context, *, args: str) -> None:
-        """Generate Images using Flux!
-
-        **Examples:**
-        - `[p]flux cyberpunk cat`
-        - `[p]f kermit --model=realism`
-
+        """
         **Arguments:**
         - `<prompt>` - A detailed description of the image you want to create.
         - `--model` - Choose the specific model to use for image generation.
-        - `--size` - Aspect Ratio for the generated image.
+        - `--size` - Resoultion for the generated image.
         
         **Models:**
         - `base` - Base flux model.
