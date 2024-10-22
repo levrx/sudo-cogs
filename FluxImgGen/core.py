@@ -50,12 +50,14 @@ class FluxImgGen(commands.Cog):
             "pixel": "flux-pixel",
             "4o": "flux-4o",
             "anydark": "any-dark",
-            "schnell": "flux-schnell",
             "pro": "flux-1.1-pro",
             "sd3": "stable-diffusion-3-large-turbo",
             "sdxl": "sdxl-lightning-4step",
             "kandinsky": "kandinsky-3.1",
-            "deliberate3": "deliberate-v3"
+            "deliberate3": "deliberate-v3",
+            "rdxl": "realdream-xl",
+            "jugg": "juggernaut-xl-v10",
+            "half": "flux-half-illustration",
         }
 
     async def initialize_tokens(self):
@@ -137,7 +139,23 @@ class FluxImgGen(commands.Cog):
         - `--size` - Aspect Ratio for the generated image.
         
         **Models:**
-        - `base`, `realism`, `3d`, `anime`, `disney`, `base`, `schnell`,  `pro`, `sd3` (Stable Diffusion 3), `sdxl`, `kandinsky`, `deliberate3`
+        - `base` - Base flux model.
+        - `realism` - Flux model with a LORa fine tuned for realism.
+        - `3d` - Flux model with a LORa fine tuned for 3d images.
+        - `anime` - Flux model with a LORa fine tuned for anime style.
+        - `disney` - Flux model with a LORa fine tuned for disney style.
+        - `pixel` - Flux model with a LORa fine tuned for pixelated style.
+        - `4o` - Flux model with a LORa fine tuned for smth idk.
+        - `anydark` - AnyDark model, great for dark scenes.
+        - `pro` - FLux Pro model.
+        - `sd3` - Stable Diffusion 3 large turbo model.
+        - `sdxl` - Stable Diffusion XL lightning model.
+        - `kandinsky` - Kandinsky 3.1 model.
+        - `kandinsky` - Kandinsky 3.1 model.
+        - `deliberate3` - Deliberate v3 model.
+        - `rdxl` - Realdream XL model.
+        - `jugg` - Juggernaut XL v10 model.
+        - `half` - Flux Half Illustration lora. Use "in the style of TOK" to trigger generation, creates half photo half illustrated elements
         """
         await ctx.typing()
         args_list = args.split(" ")
