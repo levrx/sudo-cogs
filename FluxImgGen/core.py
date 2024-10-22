@@ -30,12 +30,9 @@ import aiohttp
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
-from redbot.core.utils.views import SetApiView
-
 
 class DiffusionError(discord.errors.DiscordException):
     pass
-
 
 class FluxImgGen(commands.Cog):
     __author__: Final[List[str]] = ["tpn"]
@@ -52,13 +49,19 @@ class FluxImgGen(commands.Cog):
             "disney": "flux-disney",
             "pixel": "flux-pixel",
             "4o": "flux-4o",
-            "anydark": "any-dark"
+            "anydark": "any-dark",
+            "schnell": "flux-schnell",
+            "pro": "flux-1.1-pro",
+            "sd3": "stable-diffusion-3-large-turbo",
+            "sdxl": "sdxl-lightning-4step",
+            "kandinsky": "kandinsky-3.1",
+            "deliberate3": "deliberate-v3"
         }
 
     async def initialize_tokens(self):
-            self.tokens = await self.bot.get_shared_api_tokens("flux")
-            if not self.tokens.get("model") or not self.tokens.get("size") or not self.tokens.get("endpoint"):
-                raise DiffusionError("Setup not done. Use `set api flux model <default_model>`, `set api flux size <default_size>`, and `set api endpoint <baseUrl for api>`.")
+        self.tokens = await self.bot.get_shared_api_tokens("flux")
+        if not self.tokens.get("model") or not self.tokens.get("size") or not self.tokens.get("endpoint"):
+            raise DiffusionError("Setup not done. Use `set api flux model <default_model>`, `set api flux size <default_size>`, and `set api flux endpoint <baseUrl for api>`.")
 
     def format_help_for_context(self, ctx: commands.Context) -> str:
         pre_processed = super().format_help_for_context(ctx) or ""
@@ -77,20 +80,26 @@ class FluxImgGen(commands.Cog):
         if self.session:
             await self.session.close()
 
-    async def _request(self, baseUrl: str, prompt: str, model: str, size: Optional[str], seed: int) -> bytes:
-        sizeParam = "16:9"
-        if size is not None:
-            sizeParam = size
-        url = f"{baseUrl}?prompt={prompt}&model={model}&size={sizeParam}&seed={seed}"
-        async with self.session.get(url) as response:
-            content = await response.read()
-            
+    async def _request(self, baseUrl: str, prompt: str, model: str, size: str) -> bytes:
+        data = {
+            "prompt": prompt,
+            "n": 1,
+            "size": size,
+            "response_format": "url",
+            "model": model
+        }
+        
+        url = f"{baseUrl}/v1/images/generations"
+        
+        async with self.session.post(url, json=data) as response:
+            content = await response.json()
+
             if response.status != 200:
                 raise DiffusionError(f"Error?: {response.status}")
-            if content.startswith(b"NSFW detected"):
-                raise DiffusionError("NSFW")
-
-            return content
+            
+            image_url = content["data"][0]["url"]
+            async with self.session.get(image_url) as img_response:
+                return await img_response.read()
 
     async def _generate_image(self, prompt: str, model: Optional[str], size: Optional[str], seed: int) -> bytes:
         default_model = self.tokens["model"]
@@ -122,14 +131,9 @@ class FluxImgGen(commands.Cog):
         - `<prompt>` - A detailed description of the image you want to create.
         - `--model` - Choose the specific model to use for image generation.
         - `--size` - Aspect Ratio for the generated image.
-        - `--seed` - Specific seed value for randomization.
         
         **Models:**
-        - `base` - Base flux model.
-        - `realism` - Flux model with a LORa fine tuned for realism.
-        - `3d` - Flux model with a LORa fine tuned for 3d images.
-        - `anime` - Flux model with a LORa fine tuned for anime.
-        - `disney` - Flux model with a LORa fine tuned for disney.
+        - `base`, `realism`, `3d`, `anime`, `disney`, `base`, `schnell`,  `pro`, `sd3` (Stable Diffusion 3), `sdxl`, `kandinsky`, `deliberate3`
         """
         await ctx.typing()
         args_list = args.split(" ")
