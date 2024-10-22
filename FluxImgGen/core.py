@@ -163,8 +163,8 @@ class FluxImgGen(commands.Cog):
                 model = arg.split("=")[1]
             elif arg.startswith("--size="):
                 size = arg.split("=")[1]
-                if not re.match(r"^\d+:\d+$", size):
-                    await ctx.send("Invalid size value. Please provide a valid aspect ratio in the format 'width:height' (e.g., '16:9').")
+                if not re.match(r"^\d+x\d+$", size):
+                    await ctx.send("Invalid size value. Please provide a valid resolution in the format 'width:height' (e.g., '1920x1080').")
                     return
             else:
                 prompt_parts.append(arg)
