@@ -146,7 +146,6 @@ class FluxImgGen(commands.Cog):
         - `sd3` - Stable Diffusion 3 large turbo model.
         - `sdxl` - Stable Diffusion XL lightning model.
         - `kandinsky` - Kandinsky 3.1 model.
-        - `kandinsky` - Kandinsky 3.1 model.
         - `deliberate3` - Deliberate v3 model.
         - `rdxl` - Realdream XL model.
         - `jugg` - Juggernaut XL v10 model.
