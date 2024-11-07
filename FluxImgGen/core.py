@@ -58,6 +58,7 @@ class FluxImgGen(commands.Cog):
             "rdxl": "realdream-xl",
             "jugg": "juggernaut-xl-v10",
             "half": "flux-half-illustration",
+            "recraft": "recraft-v3",
         }
 
     async def initialize_tokens(self):
@@ -149,7 +150,8 @@ class FluxImgGen(commands.Cog):
         - `deliberate3` - Deliberate v3 model.
         - `rdxl` - Realdream XL model.
         - `jugg` - Juggernaut XL v10 model.
-        - `half` - Flux Half Illustration lora. Use "in the style of TOK" to trigger generation, creates half photo half illustrated elements
+        - `half` - Flux Half Illustration lora. Use "in the style of TOK" to trigger generation, creates half photo half illustrated elements.
+        - `recraft` - Recraft V3.
         """
         await ctx.typing()
         args_list = args.split(" ")
