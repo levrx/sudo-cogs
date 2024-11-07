@@ -50,7 +50,7 @@ class FluxImgGen(commands.Cog):
             "pixel": "flux-pixel",
             "4o": "flux-4o",
             "anydark": "any-dark",
-            "pro": "flux-1.1-pro",
+            "pro": "flux.1.1-pro-ultra",
             "sd3": "stable-diffusion-3-large-turbo",
             "sdxl": "sdxl-lightning-4step",
             "kandinsky": "kandinsky-3.1",
@@ -143,7 +143,7 @@ class FluxImgGen(commands.Cog):
         - `pixel` - Flux model with a LORa fine tuned for pixelated style.
         - `4o` - Flux model with a LORa fine tuned for smth idk.
         - `anydark` - AnyDark model, great for dark scenes.
-        - `pro` - FLux Pro model.
+        - `pro` - FLux 1.1 Pro Ultra model.
         - `sd3` - Stable Diffusion 3 large turbo model.
         - `sdxl` - Stable Diffusion XL lightning model.
         - `kandinsky` - Kandinsky 3.1 model.
