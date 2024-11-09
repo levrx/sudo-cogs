@@ -101,7 +101,7 @@ class FluxImgGen(commands.Cog):
         async with self.session.post(url, json=data, headers=headers) as response:
             content = await response.json()
 
-            if response.status != 200:
+            if not response.ok:
                 raise DiffusionError(f"Error?: {response.status}")
             
             image_url = content["data"][0]["url"]
